@@ -1,0 +1,32 @@
+{
+  "name": "@langr/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript SDK for the LANGR API (api.langr.org)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["langr", "api", "sdk", "mail", "sms", "auth", "seo", "i18n"],
+  "author": "LANGR <hikmet@langr.dk>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hiko1981/langr-sdk"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
