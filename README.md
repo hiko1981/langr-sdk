@@ -1,6 +1,22 @@
 # @langr/sdk
 
-Official TypeScript SDK for the [LANGR API](https://api.langr.org).
+[![npm version](https://img.shields.io/npm/v/@langr/sdk.svg)](https://www.npmjs.com/package/@langr/sdk)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Official TypeScript SDK for the [LANGR API](https://api.langr.org) — one API for email, SMS, auth, payments, SEO, content, and i18n.
+
+## Features
+
+- **Mail API** — Send transactional email via Resend. 8 verified domains. Inbox reading.
+- **SMS API** — Send SMS messages and OTP codes. Europe-optimized delivery.
+- **Auth API** — OTP (email + SMS), magic links, Google OAuth, session management.
+- **Payment API** — Stripe checkout, billing portal, webhook event tracking.
+- **SEO API** — Domain audits, keyword tracking, rankings, backlinks, Lighthouse scans.
+- **Content API** — AI content generation via Claude (blog posts, SEO copy, product descriptions).
+- **i18n API** — Translate text or JSON to 120+ locales. 9 RTL languages. Batch up to 50 locales.
+- **Zero dependencies** — Pure TypeScript, no runtime dependencies.
+- **Full type safety** — Complete TypeScript types for all requests and responses.
 
 ## Install
 
@@ -8,12 +24,12 @@ Official TypeScript SDK for the [LANGR API](https://api.langr.org).
 npm install @langr/sdk
 ```
 
-## Quick start
+## Quick Start
 
-```ts
+```typescript
 import { LangrClient } from "@langr/sdk";
 
-const langr = new LangrClient({ apiKey: "lgr_..." });
+const langr = new LangrClient({ apiKey: "lk_live_..." });
 
 // Send an email
 await langr.mail.send({
@@ -23,17 +39,14 @@ await langr.mail.send({
   html: "<h1>Hello!</h1>",
 });
 
-// Send an SMS
-await langr.sms.send({
-  to: "+4512345678",
-  message: "Your code is 1234",
-});
+// Send SMS OTP and verify
+await langr.sms.sendOtp({ to: "+4512345678" });
+await langr.sms.verifyOtp({ to: "+4512345678", code: "123456" });
 
-// Authenticate with OTP
-await langr.auth.sendOtp({ target: "+4512345678" });
-const session = await langr.auth.verifyOtp({
-  target: "+4512345678",
-  code: "123456",
+// Authenticate with magic link
+await langr.auth.magicLink({
+  email: "user@example.com",
+  redirect_url: "https://example.com/auth/callback",
 });
 
 // Create a payment checkout
@@ -50,17 +63,14 @@ const content = await langr.content.generate({
   locale: "en",
 });
 
-// Translate text
+// Translate to multiple languages
 const result = await langr.i18n.translate({
   text: "Hello, world!",
-  target_locales: ["da", "de", "ar"],
+  target_locales: ["da", "de", "ar", "ja"],
 });
 
 // SEO audit
 await langr.seo.audit({ domain: "example.com" });
-
-// Health check
-const health = await langr.health();
 ```
 
 ## Services
@@ -76,9 +86,25 @@ const health = await langr.health();
 | `i18n` | `translate`, `locales` |
 | `keys` | `list`, `create`, `update`, `revoke`, `rotate` |
 
-## Error handling
+**47 endpoints** across **11 services** — all accessible from one client instance.
 
-```ts
+## Why LANGR?
+
+**One API instead of many.** Stop juggling Twilio, SendGrid, Resend, and Auth0. LANGR unifies email, SMS, auth, payments, SEO, content generation, and translation into a single API with one key.
+
+- **47 REST endpoints**, one SDK
+- **120+ locales** with 9 RTL languages
+- **Europe-hosted**, GDPR-compliant
+- **Free tier**: 100 requests/day, all services included
+- **Pro**: 10,000 requests/day, $49/month
+
+### Looking for a Twilio, SendGrid, or Resend alternative?
+
+LANGR covers what you'd typically need 3-4 vendors for. See the [full comparison](https://api.langr.org/blog/langr-vs-twilio-sendgrid-resend).
+
+## Error Handling
+
+```typescript
 import { LangrClient, LangrAPIError } from "@langr/sdk";
 
 try {
@@ -92,12 +118,20 @@ try {
 
 ## Configuration
 
-```ts
+```typescript
 const langr = new LangrClient({
-  apiKey: "lgr_...",
+  apiKey: "lk_live_...",
   baseUrl: "https://api.langr.org", // default
 });
 ```
+
+## Links
+
+- [API Documentation](https://api.langr.org/docs) — Interactive Scalar docs
+- [OpenAPI Spec](https://api.langr.org/openapi.json) — Machine-readable spec
+- [Developer Portal](https://api.langr.org/portal) — Get your API key
+- [Pricing](https://api.langr.org/pricing) — Free, Pro, Enterprise
+- [Blog](https://api.langr.org/blog) — Guides and tutorials
 
 ## License
 

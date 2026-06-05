@@ -1,6 +1,6 @@
 {
   "name": "@langr/sdk",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Official TypeScript SDK for the LANGR API (api.langr.org)",
   "type": "module",
   "main": "dist/index.js",
@@ -20,7 +20,13 @@
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["langr", "api", "sdk", "mail", "sms", "auth", "seo", "i18n"],
+  "keywords": [
+    "langr", "api", "sdk", "email-api", "transactional-email",
+    "sms-api", "sms-otp", "otp-verification", "auth-api",
+    "payment-api", "seo-api", "i18n", "translation-api",
+    "multilingual", "resend-alternative", "sendgrid-alternative",
+    "twilio-alternative", "typescript", "nodejs"
+  ],
   "author": "LANGR <hikmet@langr.dk>",
   "license": "MIT",
   "repository": {
