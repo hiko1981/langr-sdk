@@ -22,6 +22,7 @@ export class LangrClient {
     content;
     i18n;
     keys;
+    brain;
     constructor(options) {
         this.apiKey = options.apiKey;
         this.baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, "");
@@ -33,6 +34,7 @@ export class LangrClient {
         this.content = new ContentService(this);
         this.i18n = new I18nService(this);
         this.keys = new KeysService(this);
+        this.brain = new BrainService(this);
     }
     /** GET /health */
     async health() {
@@ -352,6 +354,65 @@ class KeysService {
     /** POST /v1/keys/:id/rotate */
     async rotate(id) {
         return this.client.post(`/v1/keys/${id}/rotate`);
+    }
+}
+class BrainService {
+    client;
+    constructor(client) {
+        this.client = client;
+    }
+    /** POST /v1/brain/query — Ask Brain anything (4-step resolution cascade) */
+    async query(params) {
+        return this.client.post("/v1/brain/query", params);
+    }
+    /** POST /v1/brain/domain — Scan a domain */
+    async domain(params) {
+        return this.client.post("/v1/brain/domain", params);
+    }
+    /** GET /v1/brain/domain/:domain — Get cached domain profile */
+    async getDomain(domain) {
+        return this.client.get(`/v1/brain/domain/${encodeURIComponent(domain)}`);
+    }
+    /** POST /v1/brain/store — Store knowledge item */
+    async store(params) {
+        return this.client.post("/v1/brain/store", params);
+    }
+    /** GET /v1/brain/knowledge — Search knowledge graph */
+    async search(params) {
+        const query = {};
+        if (params?.query)
+            query.query = params.query;
+        if (params?.category)
+            query.category = params.category;
+        if (params?.tags)
+            query.tags = params.tags.join(",");
+        if (params?.min_confidence !== undefined)
+            query.min_confidence = String(params.min_confidence);
+        if (params?.limit)
+            query.limit = String(params.limit);
+        if (params?.include_global !== undefined)
+            query.include_global = String(params.include_global);
+        return this.client.get("/v1/brain/knowledge", query);
+    }
+    /** GET /v1/brain/knowledge/:id — Get specific knowledge item */
+    async getKnowledge(id) {
+        return this.client.get(`/v1/brain/knowledge/${id}`);
+    }
+    /** DELETE /v1/brain/knowledge/:id — Deactivate knowledge item */
+    async deleteKnowledge(id) {
+        return this.client.del(`/v1/brain/knowledge/${id}`);
+    }
+    /** POST /v1/brain/feedback — Submit feedback on a response */
+    async feedback(params) {
+        return this.client.post("/v1/brain/feedback", params);
+    }
+    /** GET /v1/brain/stats — Usage statistics */
+    async stats() {
+        return this.client.get("/v1/brain/stats");
+    }
+    /** POST /v1/brain/ingest — Trigger ingestion pipeline (admin only) */
+    async ingest(params) {
+        return this.client.post("/v1/brain/ingest", params || {});
     }
 }
 //# sourceMappingURL=client.js.map

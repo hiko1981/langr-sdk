@@ -1,4 +1,4 @@
-import type { LangrClientOptions, LangrError, MailSendParams, MailSendResult, MailInboxParams, MailInboxResult, MailMessageResult, MailDomain, SmsSendParams, SmsSendOtpParams, SmsVerifyOtpParams, SmsVerifyOtpResult, AuthSendOtpParams, AuthVerifyOtpParams, AuthVerifyOtpResult, AuthMagicLinkParams, AuthMagicLinkVerifyParams, AuthMagicLinkVerifyResult, AuthGoogleAuthorizeParams, AuthGoogleAuthorizeResult, AuthGoogleCallbackParams, AuthGoogleCallbackResult, AuthValidateSessionParams, AuthValidateSessionResult, AuthSession, PaymentCheckoutParams, PaymentCheckoutResult, PaymentPortalParams, PaymentPortalResult, PaymentEvent, PaymentEventsParams, SeoAuditParams, SeoBootstrapParams, SeoPipelineTriggerParams, SeoLighthouseParams, ContentGenerateParams, ContentGenerateResult, ContentUsageResult, I18nTranslateParams, I18nTranslateResult, I18nLocalesParams, I18nLocalesResult, ApiKeyInfo, KeyCreateParams, KeyCreateResult, KeyUpdateParams, HealthResult, HealthDetailedResult } from "./types.js";
+import type { LangrClientOptions, LangrError, MailSendParams, MailSendResult, MailInboxParams, MailInboxResult, MailMessageResult, MailDomain, SmsSendParams, SmsSendOtpParams, SmsVerifyOtpParams, SmsVerifyOtpResult, AuthSendOtpParams, AuthVerifyOtpParams, AuthVerifyOtpResult, AuthMagicLinkParams, AuthMagicLinkVerifyParams, AuthMagicLinkVerifyResult, AuthGoogleAuthorizeParams, AuthGoogleAuthorizeResult, AuthGoogleCallbackParams, AuthGoogleCallbackResult, AuthValidateSessionParams, AuthValidateSessionResult, AuthSession, PaymentCheckoutParams, PaymentCheckoutResult, PaymentPortalParams, PaymentPortalResult, PaymentEvent, PaymentEventsParams, SeoAuditParams, SeoBootstrapParams, SeoPipelineTriggerParams, SeoLighthouseParams, ContentGenerateParams, ContentGenerateResult, ContentUsageResult, I18nTranslateParams, I18nTranslateResult, I18nLocalesParams, I18nLocalesResult, ApiKeyInfo, KeyCreateParams, KeyCreateResult, KeyUpdateParams, BrainQueryParams, BrainQueryResult, BrainDomainParams, BrainDomainProfile, BrainStoreParams, BrainKnowledgeItem, BrainSearchParams, BrainSearchResult, BrainFeedbackParams, BrainStats, BrainIngestParams, BrainIngestResult, HealthResult, HealthDetailedResult } from "./types.js";
 export declare class LangrAPIError extends Error {
     readonly code: string;
     readonly status: number;
@@ -16,6 +16,7 @@ export declare class LangrClient {
     readonly content: ContentService;
     readonly i18n: I18nService;
     readonly keys: KeysService;
+    readonly brain: BrainService;
     constructor(options: LangrClientOptions);
     /** GET /health */
     health(): Promise<HealthResult>;
@@ -180,6 +181,51 @@ declare class KeysService {
     }>;
     /** POST /v1/keys/:id/rotate */
     rotate(id: string): Promise<KeyCreateResult>;
+}
+declare class BrainService {
+    private client;
+    constructor(client: LangrClient);
+    /** POST /v1/brain/query — Ask Brain anything (4-step resolution cascade) */
+    query(params: BrainQueryParams): Promise<BrainQueryResult>;
+    /** POST /v1/brain/domain — Scan a domain */
+    domain(params: BrainDomainParams): Promise<{
+        ok: boolean;
+        profile: BrainDomainProfile;
+    }>;
+    /** GET /v1/brain/domain/:domain — Get cached domain profile */
+    getDomain(domain: string): Promise<{
+        ok: boolean;
+        profile: BrainDomainProfile;
+    }>;
+    /** POST /v1/brain/store — Store knowledge item */
+    store(params: BrainStoreParams): Promise<{
+        ok: boolean;
+        item: BrainKnowledgeItem;
+    }>;
+    /** GET /v1/brain/knowledge — Search knowledge graph */
+    search(params?: BrainSearchParams): Promise<BrainSearchResult>;
+    /** GET /v1/brain/knowledge/:id — Get specific knowledge item */
+    getKnowledge(id: string): Promise<{
+        ok: boolean;
+        item: BrainKnowledgeItem;
+    }>;
+    /** DELETE /v1/brain/knowledge/:id — Deactivate knowledge item */
+    deleteKnowledge(id: string): Promise<{
+        ok: boolean;
+        message: string;
+    }>;
+    /** POST /v1/brain/feedback — Submit feedback on a response */
+    feedback(params: BrainFeedbackParams): Promise<{
+        ok: boolean;
+        feedback: Record<string, unknown>;
+    }>;
+    /** GET /v1/brain/stats — Usage statistics */
+    stats(): Promise<{
+        ok: boolean;
+        stats: BrainStats;
+    }>;
+    /** POST /v1/brain/ingest — Trigger ingestion pipeline (admin only) */
+    ingest(params?: BrainIngestParams): Promise<BrainIngestResult>;
 }
 export {};
 //# sourceMappingURL=client.d.ts.map

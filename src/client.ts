@@ -53,6 +53,19 @@ import type {
   KeyCreateParams,
   KeyCreateResult,
   KeyUpdateParams,
+  // Brain
+  BrainQueryParams,
+  BrainQueryResult,
+  BrainDomainParams,
+  BrainDomainProfile,
+  BrainStoreParams,
+  BrainKnowledgeItem,
+  BrainSearchParams,
+  BrainSearchResult,
+  BrainFeedbackParams,
+  BrainStats,
+  BrainIngestParams,
+  BrainIngestResult,
   // Health
   HealthResult,
   HealthDetailedResult,
@@ -86,6 +99,7 @@ export class LangrClient {
   readonly content: ContentService;
   readonly i18n: I18nService;
   readonly keys: KeysService;
+  readonly brain: BrainService;
 
   constructor(options: LangrClientOptions) {
     this.apiKey = options.apiKey;
@@ -99,6 +113,7 @@ export class LangrClient {
     this.content = new ContentService(this);
     this.i18n = new I18nService(this);
     this.keys = new KeysService(this);
+    this.brain = new BrainService(this);
   }
 
   /** GET /health */
@@ -487,5 +502,66 @@ class KeysService {
   /** POST /v1/keys/:id/rotate */
   async rotate(id: string): Promise<KeyCreateResult> {
     return this.client.post(`/v1/keys/${id}/rotate`);
+  }
+}
+
+class BrainService {
+  constructor(private client: LangrClient) {}
+
+  /** POST /v1/brain/query — Ask Brain anything (4-step resolution cascade) */
+  async query(params: BrainQueryParams): Promise<BrainQueryResult> {
+    return this.client.post("/v1/brain/query", params);
+  }
+
+  /** POST /v1/brain/domain — Scan a domain */
+  async domain(params: BrainDomainParams): Promise<{ ok: boolean; profile: BrainDomainProfile }> {
+    return this.client.post("/v1/brain/domain", params);
+  }
+
+  /** GET /v1/brain/domain/:domain — Get cached domain profile */
+  async getDomain(domain: string): Promise<{ ok: boolean; profile: BrainDomainProfile }> {
+    return this.client.get(`/v1/brain/domain/${encodeURIComponent(domain)}`);
+  }
+
+  /** POST /v1/brain/store — Store knowledge item */
+  async store(params: BrainStoreParams): Promise<{ ok: boolean; item: BrainKnowledgeItem }> {
+    return this.client.post("/v1/brain/store", params);
+  }
+
+  /** GET /v1/brain/knowledge — Search knowledge graph */
+  async search(params?: BrainSearchParams): Promise<BrainSearchResult> {
+    const query: Record<string, string> = {};
+    if (params?.query) query.query = params.query;
+    if (params?.category) query.category = params.category;
+    if (params?.tags) query.tags = params.tags.join(",");
+    if (params?.min_confidence !== undefined) query.min_confidence = String(params.min_confidence);
+    if (params?.limit) query.limit = String(params.limit);
+    if (params?.include_global !== undefined) query.include_global = String(params.include_global);
+    return this.client.get("/v1/brain/knowledge", query);
+  }
+
+  /** GET /v1/brain/knowledge/:id — Get specific knowledge item */
+  async getKnowledge(id: string): Promise<{ ok: boolean; item: BrainKnowledgeItem }> {
+    return this.client.get(`/v1/brain/knowledge/${id}`);
+  }
+
+  /** DELETE /v1/brain/knowledge/:id — Deactivate knowledge item */
+  async deleteKnowledge(id: string): Promise<{ ok: boolean; message: string }> {
+    return this.client.del(`/v1/brain/knowledge/${id}`);
+  }
+
+  /** POST /v1/brain/feedback — Submit feedback on a response */
+  async feedback(params: BrainFeedbackParams): Promise<{ ok: boolean; feedback: Record<string, unknown> }> {
+    return this.client.post("/v1/brain/feedback", params);
+  }
+
+  /** GET /v1/brain/stats — Usage statistics */
+  async stats(): Promise<{ ok: boolean; stats: BrainStats }> {
+    return this.client.get("/v1/brain/stats");
+  }
+
+  /** POST /v1/brain/ingest — Trigger ingestion pipeline (admin only) */
+  async ingest(params?: BrainIngestParams): Promise<BrainIngestResult> {
+    return this.client.post("/v1/brain/ingest", params || {});
   }
 }

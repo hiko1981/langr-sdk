@@ -406,6 +406,148 @@ export interface KeyUpdateParams {
 }
 
 // ──────────────────────────────────────────────
+// Brain
+// ──────────────────────────────────────────────
+
+export interface BrainQueryParams {
+  query: string;
+  context?: Record<string, unknown>;
+  domain?: string;
+  model?: string;
+  max_tokens?: number;
+}
+
+export interface BrainQueryResult {
+  ok: boolean;
+  answer: string;
+  resolution: "redis_cache" | "db_cache" | "knowledge_match" | "claude_generated";
+  confidence: number;
+  cache_id?: string;
+  knowledge_ids?: string[];
+  tokens?: { input: number; output: number };
+  cost_usd?: number;
+  latency_ms: number;
+  model?: string;
+}
+
+export interface BrainDomainParams {
+  domain: string;
+  force?: boolean;
+}
+
+export interface BrainDomainProfile {
+  id: string;
+  domain: string;
+  industry: string | null;
+  sub_industry: string | null;
+  tech_stack: string[];
+  seo_scores: Record<string, unknown>;
+  signals: Record<string, unknown>;
+  meta: Record<string, unknown>;
+  scan_count: number;
+  completeness: number;
+  last_scanned_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BrainStoreParams {
+  category:
+    | "fact"
+    | "rule"
+    | "convention"
+    | "preference"
+    | "correction"
+    | "domain_signal"
+    | "feature_pattern"
+    | "industry_pattern";
+  subject: string;
+  content: string;
+  tags?: string[];
+  confidence?: number;
+  supersedes?: string;
+  source?: string;
+  source_ref?: string;
+}
+
+export interface BrainKnowledgeItem {
+  id: string;
+  tenant_id: string;
+  category: string;
+  subject: string;
+  content: string;
+  content_hash: string;
+  tags: string[];
+  confidence: number;
+  supersedes: string | null;
+  superseded_by: string | null;
+  source: string | null;
+  source_ref: string | null;
+  usage_count: number;
+  last_used_at: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BrainSearchParams {
+  query?: string;
+  category?: string;
+  tags?: string[];
+  min_confidence?: number;
+  limit?: number;
+  include_global?: boolean;
+}
+
+export interface BrainSearchResult {
+  ok: boolean;
+  count: number;
+  items: BrainKnowledgeItem[];
+}
+
+export interface BrainFeedbackParams {
+  cache_id?: string;
+  query_text?: string;
+  rating: -1 | 1;
+  correction?: string;
+}
+
+export interface BrainStats {
+  queries_today: number;
+  cache_hits_today: number;
+  claude_calls_today: number;
+  cache_hit_rate: number;
+  knowledge_items: number;
+  domain_profiles: number;
+}
+
+export interface BrainIngestParams {
+  sources?: (
+    | "matrix"
+    | "products"
+    | "features"
+    | "capabilities"
+    | "projects"
+    | "cross-matrix"
+  )[];
+}
+
+export interface BrainIngestResult {
+  ok: boolean;
+  sources: Array<{
+    source: string;
+    total: number;
+    ingested: number;
+    skipped: number;
+    errors: number;
+  }>;
+  total_ingested: number;
+  total_skipped: number;
+  total_errors: number;
+  duration_ms: number;
+}
+
+// ──────────────────────────────────────────────
 // Health
 // ──────────────────────────────────────────────
 
