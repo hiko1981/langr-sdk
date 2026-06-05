@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hiko1981/langr-sdk"
+    "url": "git+https://github.com/hiko1981/langr-sdk.git"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
