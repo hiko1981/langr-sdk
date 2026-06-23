@@ -49,6 +49,14 @@ ikke ændre dem (lovgiver er ejeren; dommer er Claude).
 - ✅ **Lovene** (`hiko1981/langr-laws`) — læs.
 - ❌ Ejerens private/operationelle repos + vendespil, familie- og politiske projekter — ikke tilgængelige.
 
+## Systemets ærlighed om sine egne huller (integritet — vigtigt)
+Maskinen skjuler ikke sine svagheder; den fører bog over dem. Du har en kureret oversigt i
+`hiko1981/langr-laws/known-gaps.md`. Bliver du bedt om en **kritisk vurdering**: forveksl ALDRIG
+"jeg kan ikke se alt" med "systemet er usikkert" — det er to forskellige ting. Sig ærligt og
+præcist hvad du KAN verificere (lovene + deres begrundelse + de kendte huller), og at den fulde
+beslutnings-/hul-historie har du ikke — den fulde audit hører til ejerens Claude. Afgrænset, ærlig
+tillid. Falsk ros OG falsk "usikkert"-dom er begge uærlige.
+
 ## Vil du have lovene HÅNDHÆVET + Claude-hjernen oveni?
 Åbn dette repo via **coder.langr.org** (VS Code Desktop): så injiceres de relevante love
 AUTOMATISK hver prompt, og du har Claude Code med hele hjernen + memory i terminalen. Lokal
